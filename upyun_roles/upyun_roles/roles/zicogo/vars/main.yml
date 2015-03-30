@@ -1,0 +1,3 @@
+redis_path: /usr/local/redis_zicogo
+zicogo_path: /usr/local/zicogo
+dev_proc_path: /usr/local/zicogo

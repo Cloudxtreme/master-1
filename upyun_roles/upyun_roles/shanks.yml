@@ -1,0 +1,9 @@
+---
+- hosts: "{{ node }}" 
+  vars_prompt:
+    - name: version
+      prompt: "Input version"
+      default: "NOT_BACKUP"
+      private: no
+  roles:
+    - shanks

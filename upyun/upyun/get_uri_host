@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+source $1 $2
+
+CHANGED="False"
+
+host=`echo $url|cut -d '/' -f 3`
+uri=`echo $url|sed -r 's^.*com/(.*)^\1^'`
+
+#if [ $host ] && [ $uri ]; then
+if [ $url ]; then
+     echo "Yes"
+else
+    echo -n "invalid argument"
+fi
+
+
+if [ $? -eq 0 ]; then
+    CHANGED="True"
+fi
+
+exit 0

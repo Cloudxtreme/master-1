@@ -1,0 +1,77 @@
+#!/bin/env python
+# -*- coding: utf-8 -*-
+
+DOCUMENTATION = '''
+---
+module: upyun_vista
+version_added: "beta"
+short_description: get upyun facts
+description:
+    - get upyun related upyuns
+options:
+  filter:
+    description:
+      - match the variable name
+    required: False
+    default: all
+    aliases: []
+author: Min.Ai
+'''
+
+EXAMPLES = '''
+get infomation of container named example
+
+- hosts: upyun_host
+  tasks:
+  upyun_vista:
+'''
+ 
+import re
+import os
+import subprocess
+
+class UpYunVista:
+    def __init__(self, module):
+        self.module = module
+        self.name = self.module.params.get('filter')
+
+    def all_var(self):
+        result = {}
+        command = ['bash', '-c', 'set -a && source /etc/upyun.cfg && env']
+        proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+        for line in proc.stdout:
+            if '=' in line:
+                (key, _, value) = line.partition("=")
+                value = value.rstrip('\n')
+                if key == "NGINX_UPSTREAM":
+                    result[key] = [ i.split('#')[0] for i in value.split() ]
+        else:
+            result['CONSISTENT_HASH'] = len(result['NGINX_UPSTREAM']) / 2
+
+        proc.communicate()
+
+        #get_ip_cmd = r"""/bin/awk -F= '/IPADDR/{if($2 %s "192.168.") printf("%%s ",$2)}' /etc/sysconfig/network-scripts/ifcfg-eth*"""
+        get_ip_cmd = r"""ifconfig | sed -r -n 's@.*addr:(.*)Bcast:.*Mask:.*@\1@gp'|awk '{if($1 %s "192.168.") print $1}'"""
+        result['PUBLIC_IP'] =  os.popen(get_ip_cmd % ("!~")).read().split()
+        result['PRIVATE_IP'] = os.popen(get_ip_cmd % ("~")).read().split()
+
+        return result
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            filter = dict(default=''), 
+        )
+    )
+
+    try:
+        facter = UpYunVista(module)
+        facts = facter.all_var()
+        module.exit_json(changed=False, ansible_facts=facts)
+
+    except Exception, e:
+        module.fail_json(changed=False, msg=repr(e))
+
+# import module snippets
+from ansible.module_utils.basic import *
+main()

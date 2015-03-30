@@ -1,0 +1,9 @@
+dev_conf_path: /root/work/upconf/marco
+dev_proc_path: /usr/local/marco
+dev_conf_path: /data/upyun/work/upconf/marco
+dev_proc_path: /data/upyun/proc/marco
+live_path: /usr/local/marco
+backup_path: /root/backup
+upconf_path: /root/work/upconf
+core_version: v0.7.0
+upconf_version: 533da3c

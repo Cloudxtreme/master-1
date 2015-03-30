@@ -1,0 +1,4 @@
+---
+  - name: hot update
+    shell: "kill -USR2 `cat /var/run/shanks.pid`;kill -WINCH `cat /var/run/shanks.pid.oldbin`"
+    when: syntax_check.rc == 0

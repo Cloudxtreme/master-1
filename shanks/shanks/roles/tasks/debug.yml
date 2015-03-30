@@ -1,0 +1,6 @@
+---
+- name: upyun.cfg chech facts
+  upyun_shanks:
+  register: upyun_cfg
+- name: dump facts
+  debug: var="{{ upyun_cfg.ansible_facts}}"

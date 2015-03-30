@@ -1,0 +1,4 @@
+---
+  - name: shanks reload
+    shell: "{{ dest_main_path }}/nginx/sbin/nginx -s reload"
+    when: syntax_check.rc == 0

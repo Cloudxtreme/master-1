@@ -1,0 +1,3 @@
+---
+  - name: quit
+    shell: "[ -e /var/run/vivi.pid.oldbin ] && kill -QUIT `cat /var/run/vivi.pid.oldbin`"

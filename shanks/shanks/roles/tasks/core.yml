@@ -1,0 +1,9 @@
+---
+  - name: sync luajit
+    synchronize: src={{ src_main_path }}/luajit/ dest={{ dest_main_path }}/luajit/ dest_port=65422 delete=yes
+  - name: sync app
+    synchronize: src={{ src_main_path }}/nginx/app/ dest={{ dest_main_path }}/nginx/app/ dest_port=65422 rsync_opts="--exclude=etc/*" delete=yes
+  - name: sync nginx
+    synchronize: src={{ src_main_path }}/nginx/sbin/nginx dest={{ dest_main_path }}/nginx/sbin/nginx dest_port=65422
+  - name: sync nginx config
+    synchronize: src={{ src_main_path }}/nginx/conf dest={{ dest_main_path }}/nginx/ rsync_opts="--exclude=shanks/* --exclude=nginx.conf" dest_port=65422 delete=yes

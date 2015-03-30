@@ -1,0 +1,12 @@
+{
+    "redisaddr": "{{ PRIVATE_IP|last }}:1003",
+    "workernum": 10,
+    "maxrecords": 50,
+{% if inventory_hostname.startswith('CUN') %}
+    "zicodaddr": "http://121.52.226.228/",
+{% else %}
+    "zicodaddr": "http://115.231.100.100/",
+{% endif %}
+    "logfile": "{{ NGINX_LOG_DEV }}/logs/zicogo.log",
+    "loglevel": "ERROR"
+}

@@ -1,0 +1,102 @@
+#!/bin/env python
+# -*- coding: utf-8 -*-
+
+DOCUMENTATION = '''
+---
+module: upyun_facts
+version_added: "beta"
+short_description: get upyun facts
+description:
+    - get upyun related upyuns
+options:
+  filter:
+    description:
+      - match the variable name
+    required: False
+    default: all
+    aliases: []
+author: Min.Ai
+'''
+
+EXAMPLES = '''
+get infomation of container named example
+
+- hosts: upyun_host
+  tasks:
+  upyun_facts: filter=example
+'''
+ 
+import re
+import os
+import sys
+import subprocess
+
+
+class UpYunFacter:
+    def __init__(self, module):
+        self.module = module
+        self.name = self.module.params.get('filter')
+
+    def all_var(self, filter):
+        result = {}
+        command = ['bash', '-c', 'set -a && source /etc/upyun.cfg && env']
+        proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+        upcfg = []
+        for line in proc.stdout:
+            if '=' in line:
+                (key, _, value) = line.partition("=")
+                value = value.rstrip('\n')
+                if key == "NGINX_UPSTREAM":
+                    for i in value.split():
+                        ip = i.split('#')[0]
+                        upcfg.append(ip + ":8100")
+                        upcfg.append(ip + ":8200")
+                elif key in ["LVS_VIP_CTC", "LVS_VIP_CNC"]:
+                    if value:
+                        upcfg.append(value)
+        proc.communicate()
+
+        purge = []
+        purge_dir = '/usr/local/purge-server-1.0.0'
+        if os.path.exists(os.path.join(purge_dir, 'purge-at')):
+           result['alive'] = True
+        else:
+           result['alive'] = False
+
+        for line in open(os.path.join(purge_dir, 'conf/purge-service.conf')):
+            line = line.strip('\n')
+            if line:
+                id, srv = line.split()
+                if not srv.startswith('192.168'):
+                    srv = srv.split(':')[0]
+                purge.append(srv)
+
+        upcfg.sort()
+        purge.sort()
+        result['upcfg'] = upcfg
+        result['purge'] = purge
+        if upcfg == purge:
+           result['same'] = True
+        else:
+           result['same'] = False
+        return result 
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            filter = dict(default=''), 
+        )
+    )
+
+    try:
+        facter = UpYunFacter(module)
+        filter = module.params.get('filter')
+        facts = facter.all_var(filter)
+        module.exit_json(changed=False, ansible_facts=facts)
+
+    except Exception, e:
+        module.fail_json(changed=False, msg=repr(e))
+
+# import module snippets
+from ansible.module_utils.basic import *
+main()

@@ -1,0 +1,4 @@
+---
+  - name: check nginx config
+    shell: "{{ dest_main_path }}/nginx/sbin/nginx -t"
+    register: syntax_check

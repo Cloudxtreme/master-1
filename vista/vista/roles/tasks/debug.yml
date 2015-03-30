@@ -1,0 +1,6 @@
+---
+- name: upyun.cfg facts
+  upyun_vivi:
+  register: upyun_cfg
+- name: dump facts
+  debug: var="{{ upyun_cfg.ansible_facts }}"

@@ -1,0 +1,9 @@
+---
+- name: download upsoft_cdn
+  shell: "wget -nv {{ upsoft_cdn_url }} && tar zxf /root/upsoft_cdn.tgz -C /"
+- name: copy bgp61 key
+  copy: src=bgp061.key dest=/root/.ssh/ mode=0400
+- name: copy init script
+  template: src=init.sh dest=/root/init.sh
+- name: init node
+  script: /root/init.sh

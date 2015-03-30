@@ -1,0 +1,4 @@
+---
+  - name: kill USR2 and WINCH
+    shell: "kill -USR2 `cat /var/run/vista.pid`;kill -WINCH `cat /var/run/vista.pid.oldbin`"
+    when: syntax_check.rc == 0

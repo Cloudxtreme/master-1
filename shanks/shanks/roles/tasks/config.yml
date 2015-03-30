@@ -1,0 +1,18 @@
+---
+  - name: update upconf
+    local_action: git repo={{ upconf_repo }} dest={{ upconf_path }} version={{ upconf_version | default('master') }}
+  - name: get conf hash
+    local_action: shell cd {{ upconf_path }} && git rev-parse --short HEAD
+    register: conf_hash
+  - name: collect facts
+    upyun_shanks: 
+  - name: sync config
+    synchronize: src={{ src_main_path }}/nginx/conf/  dest={{ dest_main_path }}/nginx/conf/ dest_port=65422 delete=yes
+  - name: sync shanks config
+    synchronize: src={{ src_conf_path }}/conf/shanks dest={{ dest_conf_path }}/conf/ dest_port=65422 
+  - name: modify by template
+    template: src={{ src_conf_path }}/{{ item }} dest={{ dest_conf_path }}/{{ item }}
+    with_items:
+      - app/etc/config.lua
+      - conf/nginx.conf
+      - conf/shanks/upstream.conf 

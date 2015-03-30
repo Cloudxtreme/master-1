@@ -1,0 +1,4 @@
+---
+- name: quit and kill old marco
+  shell: "[ -e /var/run/marco.pid.oldbin ] && kill -QUIT `cat /var/run/marco.pid.oldbin`"
+  tags: quit

@@ -1,0 +1,7 @@
+---
+  - name: check backup dir
+    shell: "[ -d {{ backup_path }} ] || mkdir {{ backup_path }} "
+    when: version != "NOT_BACKUP"
+  - name: backup vista
+    shell: cd {{ backup_path }} ; tar -zcf vista-{{ version }}.tgz {{ live_path }}
+    when: version != "NOT_BACKUP"

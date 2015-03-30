@@ -1,0 +1,9 @@
+backup_path: /disk/ssd1/backup
+upconf_repo: "ssh://gitlab@gitlab.widget-inc.com:65422/upyun-core/upconf.git"
+upconf_path: /root/work/upconf
+src_main_path: /usr/local/vivi 
+dest_main_path: /usr/local/vivi
+src_conf_path: /root/work/upconf/vivi/nginx
+dest_conf_path: /usr/local/vivi/nginx
+core_version: v0.4.0
+upconf_version: d83cfb8

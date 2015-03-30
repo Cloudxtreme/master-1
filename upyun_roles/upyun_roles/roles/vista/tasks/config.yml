@@ -1,0 +1,22 @@
+---
+  - name: update upconf
+    local_action: git repo=ssh://gitlab@gitlab.widget-inc.com:65422/upyun-core/upconf.git
+         dest={{ upconf_path }}
+         version="{{ upconf_version| default('master') }}"
+  - name: get conf hash
+    local_action: shell cd {{ dev_conf_path }} && git rev-parse --short HEAD
+    register: conf_hash
+  - name: collect facts
+    upyun_vista: 
+  - name: sync config
+    synchronize: src={{ dev_conf_path }}/nginx dest={{ live_path }} dest_port=65422
+  - name: sync vista config
+    synchronize: src={{ dev_conf_path }}/nginx/conf/vista dest={{ live_path }}/nginx/conf/ dest_port=65422 delete=yes
+  - name: add monitor file
+    shell: "[ -e {{ live_path }}/nginx/html/test.test ] || echo test >  {{ live_path }}/nginx/html/test.test"
+  - name: modify by template
+    template: src={{ dev_conf_path }}/{{ item }} dest={{ live_path }}/{{ item }}
+    with_items:
+      - nginx/app/etc/config.lua
+      - nginx/conf/vista/upstream.conf 
+      - nginx/conf/vista/vista.conf 

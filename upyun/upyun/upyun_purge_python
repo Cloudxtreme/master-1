@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+import shlex,json,sys
+
+args_file = sys.argv[1]
+args_data = file(args_file).read()
+arguments = shlex.split(args_data)
+
+print json.dumps({'data': args_data})

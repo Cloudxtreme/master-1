@@ -1,0 +1,9 @@
+--- 
+- include: backup.yml
+  tags: backup
+- include: init.yml
+  tags: init
+- include: core.yml
+  tags: core
+- include: config.yml
+  tags: config

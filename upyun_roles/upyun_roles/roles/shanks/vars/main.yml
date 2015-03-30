@@ -1,0 +1,8 @@
+backup_path: /root/backup
+upconf_path: /root/work/upconf
+dev_src_path:  /root/work/shanks
+dev_proc_path: /usr/local/shanks
+dev_conf_path: /root/work/upconf/shanks
+live_path: /usr/local/shanks
+core_version: v0.3.4
+upconf_version: 8f58bd1

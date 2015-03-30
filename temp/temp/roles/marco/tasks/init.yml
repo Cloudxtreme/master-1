@@ -1,0 +1,3 @@
+---
+  - name: sync marco
+    synchronize: src={{ dev_proc_path }} dest={{ live_path }} dest_port=65422

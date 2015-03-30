@@ -1,0 +1,5 @@
+---
+  - name: collect facts
+    upyun_cdn_migration: 
+  - name: modify by template
+    template: src=migration.conf dest={{ live_path }}/migration.conf

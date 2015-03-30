@@ -1,0 +1,10 @@
+---
+  - name: kill USR2 and WINCH
+    shell: "kill -USR2 `cat /var/run/marco.pid`;kill -WINCH `cat /var/run/marco.pid.oldbin`"
+    tags: usr2
+  - name: kill QUIT
+    shell: "[ -e /var/run/marco.pid.oldbin ] && kill -QUIT `cat /var/run/marco.pid.oldbin`"
+    tags: quit
+  - name: marco reload
+    shell: "/usr/local/marco/nginx/sbin/nginx -s reload"
+    tags: reload

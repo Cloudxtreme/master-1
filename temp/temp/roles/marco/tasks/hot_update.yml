@@ -1,0 +1,4 @@
+---
+- name: hot_update and kill USR2
+  shell: "kill -USR2 `cat /var/run/marco.pid`;kill -WINCH `cat /var/run/marco.pid.oldbin`"
+  tags: hot_update

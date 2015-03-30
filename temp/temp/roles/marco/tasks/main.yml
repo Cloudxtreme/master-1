@@ -1,0 +1,19 @@
+---
+- include: backup.yml
+  tags: backup
+- include: init.yml
+  tags: init
+- include: core.yml
+  tags: core
+- include: app.yml
+  tags: app
+- include: config.yml
+  tags: config
+- include: check.yml
+  tags: check
+- include: reload.yml
+  tags: reload
+- include: hot_update.yml
+  tags: hot_update
+- include: quit.yml
+  tags: quit

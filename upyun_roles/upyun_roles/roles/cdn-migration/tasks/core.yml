@@ -1,0 +1,3 @@
+---
+  - name: cdn-migration init
+    synchronize: src={{ dev_proc_path }} dest=/usr/local/ rsync_opts="--exclude=migration.conf --exclude=.git/" dest_port=65422 delete=yes

@@ -1,0 +1,8 @@
+---
+- name: set isp value
+  set_fact: isp={{ ansible_hostname.split("-")[0] }}
+- name: copy config script
+  template: src=config.sh dest=/root/config.sh
+- name: config node
+  script: /root/config.sh
+  

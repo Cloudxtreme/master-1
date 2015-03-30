@@ -1,0 +1,33 @@
+--- 
+- include: debug.yml
+  tags: 
+    - debug 
+- include: backup.yml
+  tags: 
+    - backup
+- include: init.yml
+  tags:
+     - init
+- include: core.yml
+  tags: 
+     - core
+- include: app.yml
+  tags: 
+     - app
+- include: config.yml
+  tags: 
+     - config
+- include: check.yml
+  tags:
+     - check
+     - reload
+     - hot_update
+- include: hot_update.yml
+  tags: 
+     - hot_update
+- include: quit.yml
+  tags: 
+     - quit
+- include: reload.yml
+  tags: 
+     - reload

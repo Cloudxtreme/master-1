@@ -1,0 +1,3 @@
+---
+  - name: sync app
+    synchronize: src={{ dev_proc_path }}/nginx/app/ dest={{ live_path }}/nginx/app/ dest_port=65422 rsync_opts="--exclude=etc/* --exclude=*.so" delete=yes

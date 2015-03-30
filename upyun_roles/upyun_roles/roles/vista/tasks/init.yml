@@ -1,0 +1,3 @@
+---
+  - name: vista init
+    synchronize: src={{ dev_proc_path }} dest=/usr/local/  dest_port=65422

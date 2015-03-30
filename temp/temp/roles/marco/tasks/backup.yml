@@ -1,0 +1,5 @@
+---
+  - name: check backup dir
+    shell: "[ -d /root/backup ] || mkdir /root/backup"
+  - name: backup marco
+    shell: tar czf /root/backup/marco-0.4.0.tgz /usr/local/marco

@@ -1,0 +1,5 @@
+---
+  - name: check nginx config
+    shell: "{{ dest_main_path }}/nginx/sbin/nginx -t"
+  - name: hot update
+    shell: "kill -USR2 `cat /var/run/vivi.pid`;kill -WINCH `cat /var/run/vivi.pid.oldbin`"

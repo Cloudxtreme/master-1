@@ -1,0 +1,8 @@
+backup_path: /root/backup
+upconf_path: /root/work/upconf
+dev_src_path:  /root/work/vista
+dev_proc_path: /usr/local/vista
+dev_conf_path: /root/work/upconf/vista
+live_path: /usr/local/vista
+core_version: v0.1.2
+upconf_version: 58af095

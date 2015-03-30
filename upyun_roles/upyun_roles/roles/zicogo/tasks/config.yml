@@ -1,0 +1,7 @@
+---
+- name: get sys config
+  upyun_marco: 
+- name: sync zicogo config
+  template: src=config.json dest={{ zicogo_path }}/config.json
+- name: sync redis config
+  template: src=redis.1003.conf dest={{ redis_path }}/redis.1003.conf

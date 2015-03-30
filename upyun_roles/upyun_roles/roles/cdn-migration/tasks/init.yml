@@ -1,0 +1,11 @@
+---
+  - name: copy src directory
+    synchronize: src=cdn-migration.tgz dest=/root/ dest_port=65422 delete=yes
+  - name: check Crypto
+    shell: "tar zxf /root/cdn-migration.tgz -C /usr/local/lib/python2.7/site-packages/"
+  - name: sync redis bin
+    synchronize: src=redis-server dest=/usr/local/redis2.4.2/bin/ dest_port=65422
+  - name: copy redis config
+    synchronize: src=redis.p.1044.m.conf dest=/usr/local/redis2.4.2/ dest_port=65422
+    
+    

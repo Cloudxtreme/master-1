@@ -1,0 +1,10 @@
+--- 
+- include: init.yml
+  tags: init
+- include: core.yml
+  tags: core
+- include: config.yml
+  tags: config
+- name: restart zicogo
+  shell: '/etc/init.d/zicogo restart'
+  tags: restart 

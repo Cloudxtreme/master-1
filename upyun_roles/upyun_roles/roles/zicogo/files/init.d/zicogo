@@ -1,0 +1,132 @@
+#!/bin/sh
+# Description: Startup script for Zicogo/Redis
+# Author: eimine <min.ai@upai.com>
+# Last update: 2015-01-20
+
+[ -s /etc/upyun.cfg ] && source /etc/upyun.cfg
+
+ulimit -S -c 0
+ulimit -n 65535
+ulimit -f unlimited
+ulimit -u unlimited
+
+. /etc/rc.d/init.d/functions
+
+. /etc/sysconfig/network
+
+[ "$NETWORKING" = "no" ] && exit
+
+BASE_DIR="/usr/local/zicogo"
+
+ZICOGO_EXEC="${BASE_DIR}/zicogo"
+ZICOGO_PROG=$(basename $ZICOGO_EXEC)
+ZICOGO_OPTIONS="-config=${BASE_DIR}/config.json"
+ZICOGO_PIDFILE="/var/run/zicogo.pid"
+ZICOGO_LOCKFILE=/var/lock/subsys/zicogo
+
+ZICOGO_REDIS_PATH="/usr/local/redis_zicogo"
+ZICOGO_REDIS_EXEC="$ZICOGO_REDIS_PATH/bin/redis-server"
+ZICOGO_REDIS_PROG="$(basename $ZICOGO_REDIS_EXEC)"
+ZICOGO_REDIS_CLI="$ZICOGO_REDIS_PATH/bin/redis-cli"
+ZICOGO_REDIS_CONF="$ZICOGO_REDIS_PATH/redis.1003.conf"
+ZICOGO_REDIS_LOCKFILE="/var/lock/zicogo_redis"
+ZICOGO_REDIS_HOST=$(awk '/^[[:blank:]]*bind/ { print $2 }' $ZICOGO_REDIS_CONF)
+ZICOGO_REDIS_PORT=$(awk '/^[[:blank:]]*port/ { print $2 }' $ZICOGO_REDIS_CONF)
+ZICOGO_REDIS_DATA=$(awk '/^[[:blank:]]*dir/ { print $2 }' $ZICOGO_REDIS_CONF)
+ZICOGO_REDIS_PIDFILE=$(awk '/^[[:blank:]]*pidfile/ { print $2 }' $ZICOGO_REDIS_CONF)
+
+[ -d $ZICOGO_REDIS_DATA ] || mkdir $ZICOGO_REDIS_DATA 
+
+check_run_env() {
+   #LOCAL_IP=$(/bin/awk -F= '/IPADDR/{if($2 ~ "192.168.") print $2}' /etc/sysconfig/network-scripts/ifcfg-eth*|tail -n1)
+   LOCAL_IP=$(ifconfig | sed -r -n 's@.*addr:(.*)Bcast:.*Mask:.*@\1@gp'|awk '{if($1 ~ "192.168.") print $1}'|tail -n1)
+   IPS=( $NGINX_UPSTREAM )
+   [[ ${IPS[0]} == *${LOCAL_IP}* || ${IPS[1]} == *${LOCAL_IP}* ]] || exit 1 
+}
+
+redis_start(){
+    echo -n $"Starting $ZICOGO_REDIS_PROG: "
+    daemon $ZICOGO_REDIS_EXEC $ZICOGO_REDIS_CONF
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $ZICOGO_REDIS_LOCKFILE
+    return $retval
+}
+
+zicogo_start() {
+    echo -n $"Starting $ZICOGO_PROG: "
+    daemon /usr/local/bin/daemonize -p $ZICOGO_PIDFILE $ZICOGO_EXEC $ZICOGO_OPTIONS
+
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $ZICOGO_LOCKFILE
+    return $retval
+}
+
+zicogo_stop() {
+    echo -n $"Stopping $ZICOGO_PROG: "
+    retval=$?
+    killproc -p $ZICOGO_PIDFILE $ZICOGO_PROG 
+    echo
+    [ $retval -eq 0 ] && rm -rf $ZICOGO_LOCKFILE
+    return $retval
+}
+
+redis_stop(){
+    echo -n $"Stopping $ZICOGO_REDIS_PROG: "
+    retval=$?
+    $ZICOGO_REDIS_CLI -h $ZICOGO_REDIS_HOST -p $ZICOGO_REDIS_PORT shutdown
+    echo
+    [ $retval -eq 0 ] && rm -rf $ZICOGO_REDIS_LOCKFILE
+    return $retval
+}
+
+rh_redis_status() {
+    status -p $ZICOGO_REDIS_PIDFILE $ZICOGO_REDIS_PROG
+}
+
+rh_zicogo_status() {
+    status -p $ZICOGO_PIDFILE $ZICOGO_PROG
+}
+
+rh_zicogo_status_q() {
+    rh_zicogo_status >/dev/null 2>&1
+}
+
+rh_redis_status_q() {
+    rh_redis_status >/dev/null 2>&1
+}
+
+
+case "$1" in
+    start)
+        check_run_env
+        rh_redis_status || redis_start
+        rh_zicogo_status || zicogo_start
+        ;;
+    stop)
+        rh_redis_status_q && redis_stop
+        rh_zicogo_status_q && zicogo_stop
+        ;;
+    restart)
+        rh_redis_status_q && redis_stop
+        rh_zicogo_status_q && zicogo_stop
+
+        check_run_env
+        redis_start 
+        zicogo_start 
+        ;;
+    status)
+        rh_zicogo_status
+        rh_redis_status
+        ;;
+    zicogo_restart)
+        zicogo_stop
+        check_run_env
+        zicogo_start
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|zicogo_restart}"
+        exit 2
+esac
+exit $?

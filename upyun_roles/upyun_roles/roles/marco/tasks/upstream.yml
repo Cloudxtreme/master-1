@@ -1,0 +1,13 @@
+---
+  - name: update nginx config to mark host down
+    shell: sed -r -i '/{{ip}}/s@down@@g' /usr/local/marco/nginx/conf/marco/upstream.conf
+    tags: up
+  - name: update nginx config to mark host down
+    shell: sed -r -i '/{{ip}}/s@(.*)=3s.*;@\1=3s down;@g' /usr/local/marco/nginx/conf/marco/upstream.conf
+    tags: down
+  - name: check nginx config
+    shell: /usr/local/marco/nginx/sbin/nginx -t
+    tags: reload
+  - name: reload nginx
+    shell: /etc/init.d/marco reload
+    tags: reload

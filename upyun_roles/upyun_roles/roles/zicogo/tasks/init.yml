@@ -1,0 +1,13 @@
+---
+- name: check zicogo
+  shell: "[ -d {{ zicogo_path }} ] || mkdir {{ zicogo_path }}"
+- name: sync redis bin
+  synchronize: src=redis_zicogo.tgz dest=/usr/local/ dest_port=65422 delete=yes
+- name: init redis
+  shell: 'cd /usr/local/ && tar zxf redis_zicogo.tgz && rm redis_zicogo.tgz -r'
+- name: startup when onboot
+  shell: 'sed -i "/zicogo/d;/^\/etc\/init.d\/marco/i\/etc/init.d/zicogo start" /etc/rc.d/rc.local'
+- name: sync daemonize
+  synchronize: src=bin/daemonize dest=/usr/local/bin/ dest_port=65422 delete=yes
+- name: sync script
+  synchronize: src=init.d/zicogo dest=/etc/init.d/zicogo dest_port=65422 delete=yes

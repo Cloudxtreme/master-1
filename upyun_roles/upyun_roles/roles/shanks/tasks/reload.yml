@@ -1,0 +1,3 @@
+---
+  - name: shanks reload
+    shell: "{{ live_path }}/nginx/sbin/nginx -s reload"
